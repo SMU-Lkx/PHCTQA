@@ -138,9 +138,7 @@ If you find this work useful, please cite:
 
 ## License
 
-<!-- TODO: confirm with corresponding authors (MIT or Apache-2.0) -->
-
-This project is released under the [LICENSE] license.
+License to be determined. All rights reserved until a license is added.
 
 ## Contact
 
