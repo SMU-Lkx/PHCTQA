@@ -32,27 +32,7 @@ PHCTQA employs a task-oriented modular architecture comprising **ten independent
 - **Physics-informed multiple instance learning (PIMIL):** for artifact-type defects, each NCCT volume is treated as a "bag" of axial slices; anatomical and intensity-based priors filter out redundant slices before an attention-based MIL module aggregates quality-related features — bypassing full-volume redundancy and enabling real-time CPU inference.
 - Eight branches use deep learning models with a lightweight **EfficientNet-v2-s** backbone; the remaining two (incomplete vertex scan and incomplete apex scan) use efficient traditional image processing algorithms.
 
-```mermaid
-flowchart TD
-    A[NCCT Volume] --> B{Anatomical Region}
-    B -->|Head| H[Head Expert Branches]
-    B -->|Thorax| T[Thorax Expert Branches]
-
-    H --> H1[① Vertex Scan<br/>Uppermost axial slice<br/>Traditional algorithm]
-    H --> H2[② Skull-base Scan<br/>Mid-sagittal slice<br/>CNN]
-    H --> H3[③ Head Misalignment<br/>Bone MIP<br/>CNN]
-    H --> H4[④ Head Motion Artifacts<br/>Axial bag + foreground priors<br/>PIMIL]
-    H --> H5[⑤ Head Metal Artifacts<br/>Axial bag + HU thresholding<br/>PIMIL]
-
-    T --> T1[⑥ Apex Scan<br/>Uppermost axial slice<br/>Traditional algorithm]
-    T --> T2[⑦ Lung-base Scan<br/>Lowermost axial slice<br/>CNN]
-    T --> T3[⑧ Thorax Misalignment<br/>Bone MIP<br/>CNN]
-    T --> T4[⑨ Respiratory Motion Artifacts<br/>Axial bag + lung priors<br/>PIMIL]
-    T --> T5[⑩ Thorax Metal Artifacts<br/>Axial bag + HU thresholding<br/>PIMIL]
-
-    H1 & H2 & H3 & H4 & H5 --> R[Quality Assessment Report]
-    T1 & T2 & T3 & T4 & T5 --> R
-```
+![PHCTQA framework](assets/fig2_framework.png)
 
 <!-- TODO: replace the Mermaid diagram with assets/framework.png (Fig. 2 of the paper) -->
 
