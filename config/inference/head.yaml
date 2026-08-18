@@ -1,0 +1,115 @@
+# config/inference/head.yaml
+# PHCTQA head-region unified inference config.
+
+region: head
+device: cpu                 # cpu | cuda | npu
+seed: 42
+
+input:
+  path: example/head_dicom
+  case_id: null
+  modality: NCCT
+
+output:
+  report_format: json
+  save_probs_npy: false
+  save_attention: false
+
+weights_dir: weight
+manifest: weights/manifest.json
+
+branches:
+  head_IVS:
+    enabled: true
+    defect: "Incomplete head vertex scan"
+    type: tool
+    weight: null
+    tool:
+      criterion: nonzero_ratio
+      window_width: 100
+      window_center: 50
+      crop_size: 224
+      nonzero_ratio: 0.05
+
+  head_ISB:
+    enabled: true
+    defect: "Incomplete skull-base scan"
+    type: cnn
+    weight: head_ISB.pth
+    cnn:
+      view: mid_sagittal
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      preprocess:
+        window_width: 100   # brain window
+        window_center: 50
+
+  head_MAL:
+    enabled: true
+    defect: "Head misalignment"
+    type: cnn
+    weight: head_MAL.pth
+    cnn:
+      view: bone_mip
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      preprocess:
+        center_crop: 448
+      bone_segmentation:
+        hu_min: 0
+        hu_max: 3500
+        threshold: 500
+
+  head_MOT:
+    enabled: true
+    defect: "Head motion artifacts"
+    type: mil
+    weight: head_MOT.pth
+    mil:
+      bag: brain_foreground_axi
+      prior: foreground_screening
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      hidden_dim: 256
+      preprocess:
+        window_width: 100
+        window_center: 50
+        center_crop: 448
+      foreground_screening:
+        min_ratio: 0.05
+        air_thresh: -100
+
+  head_MTL:
+    enabled: true
+    defect: "Head metal artifacts"
+    type: mil
+    weight: head_MTL.pth  # head_MTL.pth
+    mil:
+      bag: metal_streak_axi
+      prior: intensity_threshold_cc
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      hidden_dim: 256
+      preprocess:
+        window_width: 100
+        window_center: 50
+        center_crop: 448
+      intensity_threshold_cc:
+        intensity_threshold: 3000
+        min_area: 10
+        metal_prescreen:
+          enabled: true
+          metal_thresh: 3000
+          min_metal_pixels: 100

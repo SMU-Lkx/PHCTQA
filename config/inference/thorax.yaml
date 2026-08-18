@@ -1,0 +1,117 @@
+# config/inference/thorax.yaml
+# PHCTQA thorax-region unified inference config.
+
+region: thorax
+device: cpu
+seed: 42
+
+input:
+  path: example/thorax_dicom
+  case_id: null
+  modality: NCCT
+
+output:
+  report_format: json
+  save_probs_npy: false
+  save_attention: false
+
+weights_dir: weight
+manifest: weights/manifest.json
+
+branches:
+  thorax_IAS:
+    enabled: true
+    defect: "Incomplete thorax apex scan"
+    type: tool
+    weight: null
+    tool:
+      criterion: otsu_internal_regions
+      window_width: 1500
+      window_center: -600
+      crop_size: 224
+      min_area: 200
+      min_regions: 2
+
+  thorax_ILB:
+    enabled: true
+    defect: "Incomplete lung-base scan"
+    type: cnn
+    weight: thorax_ILB.pth
+    cnn:
+      view: axial_bottom
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      preprocess:
+        window_width: 1500
+        window_center: -600
+        center_crop: 448
+
+  thorax_MAL:
+    enabled: true
+    defect: "Thorax misalignment"
+    type: cnn
+    weight: thorax_MAL.pth
+    cnn:
+      view: bone_mip
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      preprocess:
+        center_crop: 448
+      bone_segmentation:
+        hu_min: 0
+        hu_max: 3500
+        threshold: 500
+
+  thorax_MOT:
+    enabled: true  # true | false
+    defect: "Respiratory motion artifacts"
+    type: mil
+    weight: thorax_MOT.pth
+    mil:
+      bag: otsu_lung_axi
+      prior: otsu_lung
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      hidden_dim: 256
+      preprocess:
+        window_width: 1500
+        window_center: -600
+        center_crop: 448
+      otsu_lung:
+        min_area: 100
+        min_regions: 1
+
+  thorax_MTL:
+    enabled: true  # true | false
+    defect: "Thorax metal artifacts"
+    type: mil
+    weight: thorax_MTL.pth
+    mil:
+      bag: metal_streak_axi
+      prior: intensity_threshold_cc
+      backbone: efficientnet_v2_s
+      num_classes: 2
+      input_size: 224
+      in_channels: 3
+      dropout: 0.5
+      hidden_dim: 256
+      preprocess:
+        window_width: 1500
+        window_center: -600
+        center_crop: 448
+      intensity_threshold_cc:
+        intensity_threshold: 3000
+        min_area: 10
+        metal_prescreen:
+          enabled: true
+          metal_thresh: 3000
+          min_metal_pixels: 10

@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Weights & data (DO NOT commit real patient data or large weights)
+*.pth
+*.ckpt
+*.h5
+*.npy
+weight/
+weights/
+data/
+*.nii.gz
+*.dcm
+
+# Outputs
+outputs/
+output/
+*.json
+*.csv
+*.xls
+*.xlsx
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
