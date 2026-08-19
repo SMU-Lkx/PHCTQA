@@ -1,2 +1,0 @@
-head: zhusha1_15
-thorax: chidong1_12
