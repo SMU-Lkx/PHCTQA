@@ -17,6 +17,8 @@ weights/
 data/
 *.nii.gz
 *.dcm
+# Allow anonymized demo DICOM in example/
+!example/**/*.dcm
 
 # Outputs
 outputs/
