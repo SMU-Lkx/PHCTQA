@@ -83,12 +83,17 @@ cd PHCTQA
 git lfs pull
 ```
 
-# Create a virtual environment (optional but recommended)
+**2. Create a virtual environment (optional but recommended)**
+
+```bash
 python -m venv venv
 source venv/bin/activate  # Linux/macOS
 # venv\Script\activate  # Windows
+```
 
-# Install dependencies
+**3. Install dependencies**
+
+```bash
 pip install -r requirements.txt
 
 # (Optional) Install as an editable package
@@ -131,14 +136,19 @@ A JSON report (e.g., `outputs/head_demo.json`) containing:
 - `elapsed_sec`: total wall-clock time (model loading + inference)
 - `inference_sec`: parallel inference wall-clock time
 
+### Expected run time (demo on a normal desktop computer)
+
+- **Head**: ~23 s on CPU; ~1.1 s on NPU
+- **Thorax**: ~20 s on CPU; ~1.6 s on NPU
+
 ## Instructions for Use
 
 ### On your own data
 
 1. Organize your DICOM series into one directory per patient.
-2. Use the pre-trained weights under `weight/` or your own weights:
-   - `weight/head_IVS.pth`, `weight/head_ISB.pth`, ...
-   - `weight/thorax_IAS.pth`, `weight/thorax_ILB.pth`, ...
+2. The pre-trained weights are already included in the repository under `weight/` (tracked with Git LFS). If the files appear as small pointer stubs, run `git lfs pull` to download the actual weights.
+   - `weight/head_ISB.pth`, `weight/head_MAL.pth`, `weight/head_MOT.pth`, `weight/head_MTL.pth`
+   - `weight/thorax_ILB.pth`, `weight/thorax_MAL.pth`, `weight/thorax_MOT.pth`, `weight/thorax_MTL.pth`
 3. Run inference:
 
 ```bash
@@ -160,7 +170,23 @@ python -m phctqa.inference \
 - `cuda`: NVIDIA GPU
 - `npu`: Huawei Ascend NPU (requires `torch-npu`)
 
+## Citation
+
+If you use this software in your research, please cite:
+
+```bibtex
+@article{li2026phctqa,
+  title={Lightweight and rapid identification of ten head-thorax {NCCT} quality defects via physics-informed multi-view and multi-instance {AI}},
+  author={Li, Yin and Long, Kaixing and Wan, Yun and Qin, Junpu and Wei, Chenghua and Li, Xi and Lv, Zhu and Liu, Xiaomei and Chen, Yijun and Long, Rifeng and Tian, Junjie and Zheng, Manman and Yuan, Guoping and Zhong, Liming and Yang, Wei and Yao, Lin},
+  journal={Nature Communications},
+  year={2026}
+}
+```
 
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+## Contact
+
+For questions or issues, please open a GitHub issue or contact the corresponding authors.
